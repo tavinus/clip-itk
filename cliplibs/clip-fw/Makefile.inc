@@ -4,8 +4,8 @@
 #
 #	Compile flags
 #
-CLIPROOT='/home/tavinus/src/clip-estiloinfo-git/cliproot'
-include /home/tavinus/src/clip-estiloinfo-git/cliproot/include/Makefile.inc
+CLIPROOT='/home/tavinus/cliproot'
+include /home/tavinus/cliproot/include/Makefile.inc
 OSNAME='LINUX'
 DLLSUFF='.so'
 DLLREALSUFF='.so'
