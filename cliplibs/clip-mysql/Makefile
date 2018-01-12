@@ -11,7 +11,7 @@ ATARGET=libclip-mysql.a
 RTARGET=libclip-mysql$(DLLREALSUFF)
 CFLAGS=-fPIC $(C_FLAGS) -I/usr/include/mysql -I/usr/local/include/mysql
 OBJS=ms_clip.o ms.o
-LIBS=-L/usr/lib/mysql -lmysqlclient $(C_LIBS)
+LIBS=-L/usr/lib64/mysql -lmysqlclient $(C_LIBS)
 
 all:  have_lib	$(TARGET) $(ATARGET)
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+\#!/bin/sh
 
 uname=`uname -s`
 uver=`uname -r`
@@ -30,7 +30,7 @@ case "$uname" in
 		;;
 	[lL]inux*)
 		osname=LINUX
-		stdlibpath=/usr/lib
+		stdlibpath=/usr/lib64
 		stdincpath=/usr/include
 		;;
 	FreeBSD*)

@@ -16,10 +16,10 @@ $(TARGET): $(OBJS)
 	$(CLIPROOT)/bin/clip_makeslib $(TARGET) $(OBJS)
 
 ct_com.o: ct_com.c ctcom.ch
-	$(CC) $(C_FLAGS) $(CLIPINCLUDE) -c ct_com.c
+	$(CC) $(C_FLAGS) $(ADD_CFLAGS) $(CLIPINCLUDE) -c ct_com.c
 
 serial.o: serial.c ctcom.ch
-	$(CC) $(C_FLAGS) $(CLIPINCLUDE) -c serial.c
+	$(CC) $(C_FLAGS) $(ADD_CFLAGS) $(CLIPINCLUDE) -c serial.c
 
 hashcode.h:
 	echo '#define HASH_ferror ' $$(echo ferror| $(CLIPROOT)/bin/cliphash | cut -d' ' -f2) >hashcode.h

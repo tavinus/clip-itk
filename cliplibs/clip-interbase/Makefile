@@ -24,7 +24,7 @@ $(TARGET): $(OBJS)
 	$(CLIPROOT)/bin/clip_makeslib $(TARGET) $(OBJS) $(LIBS)
 
 ib_clip.o: ib_clip.c interbase.ch
-	$(CC) $(CFLAGS) -c ib_clip.c
+	$(CC) $(CFLAGS) $(ADD_CFLAGS) -c ib_clip.c
 
 ib.o: ib.prg interbase.ch
 	$(CLIPROOT)/bin/clip -l ib.prg

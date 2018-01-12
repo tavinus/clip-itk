@@ -1,0 +1,638 @@
+ifndef CLIPROOT
+	CLIPROOT=$(shell cd ../../../; pwd)/cliproot
+endif
+
+ifdef CLIPROOT
+	CLIP = $(CLIPROOT)/bin/clip
+	CLIP_MAKESLIB = $(CLIPROOT)/bin/clip_makeslib
+	CLIPFLAGS = -nwl -I./include
+	include $(CLIPROOT)/include/Makefile.inc
+else
+	CLIP = clip
+	CLIP_MAKESLIB = clip_makeslib
+	CLIPFLAGS = -nwl -I./include
+endif
+
+OBJS  =	ctiapp.o ctibin.o ctibox.o ctibrowsecombo.o cticalendar.o \
+	cticheckbox.o cticontainer.o cticontrol.o ctientry.o ctievents.o \
+	ctifiled.o ctifuncs.o ctihbox.o ctilabel.o ctilayout.o ctilist.o \
+	ctimain.o ctimenubar.o ctimenuitem.o ctimenu.o ctimenushell.o \
+	ctiobjectlist.o ctiobject.o ctioptionmenu.o ctipalette.o \
+	ctipushbutton.o ctiradiobutton.o ctiradiogroup.o ctisignal.o \
+	ctistatusbar.o ctitbrowse.o ctivbox.o ctiwidget.o ctiwindow.o ctizorder.o
+
+LIB_NAME = libclip-cti
+
+CLIPLIBS =
+ADD_OBJS =
+POBJS	=
+LIB 	= $(LIB_NAME).a
+SLIB	= $(LIB_NAME)$(DLLSUFF)
+SLIBREAL = $(LIB_NAME)$(DLLREALSUFF)
+.SUFFIXES: .prg .o .po
+
+all: links rm_include $(OBJS) $(LIB) $(SLIB)
+
+d: set_dbg
+
+export CFLAGS
+
+set_dbg: CLIPDBGFLAG=-g
+set_dbg: all
+
+example_clean:
+	-cd example && $(MAKE) clean
+
+test_clean:
+	-cd test && $(MAKE) clean
+
+clean: example_clean
+	rm -rf *.o *.c *.s *.a *.so *.po *.pa *.log *.b *.BAK *.bak include/*.bak \
+	include/*.BAK *~ core* *core *.ex *.nm
+
+depend:
+	makedepend -w80 -I./include -- *.prg 2>/dev/null
+
+install:
+	$(CLIPROOT)/bin/clip_cp libclip-cti $(DESTDIR)$(CLIPROOT)/lib
+	chmod 0755  $(DESTDIR)$(CLIPROOT)/lib/$(SLIB)
+	[ "$(SLIBREAL)" = "$(SLIB)" ] || cp $(SLIBREAL) $(DESTDIR)$(CLIPROOT)/lib
+	mkdir -p $(DESTDIR)$(CLIPROOT)/doc/example/clip-cti
+	cp example/*.prg example/Makefile example/test.dbf $(DESTDIR)$(CLIPROOT)/doc/example/clip-cti
+	mkdir -p $(DESTDIR)$(CLIPROOT)/include/cti
+	cp include/*.ch $(DESTDIR)$(CLIPROOT)/include/cti
+	cp include/cti.ch $(DESTDIR)$(CLIPROOT)/include
+	-cp ./.calendar $(DESTDIR)$(CLIPROOT)/etc
+
+rm_include:
+	rm -rf $(CLIPROOT)/include/cti
+	rm -f $(CLIPROOT)/cti.ch
+
+links:
+	#[ -d include/cti ] || (cd include && ln -sf . cti)
+
+$(LIB): $(OBJS)
+	rm -f $(LIB)
+	$(CLIPROOT)/bin/clip_makelib $(LIB) $(OBJS)
+
+$(SLIB): $(LIB)
+	$(CLIP_MAKESLIB) $(SLIB) $(LIB)
+
+.prg.o:
+	$(CLIP) $(CLIPFLAGS) $(CLIPDBGFLAG) $< $(CLIPLIBS)
+
+.prg.po:
+	$(CLIP) $(CLIPFLAGS) $(CLIPDBGFLAG) -p $< $(CLIPLIBS)
+
+arc: example_clean test_clean clean
+	tar cjfv cti.tar.bz2 . --exclude cti.tar.bz2 --exclude *.bak --exclude *.o
+
+# DO NOT DELETE
+
+ctiapp.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctiapp.o: ./include/ctibin.ch ./include/ctibox.ch
+ctiapp.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctiapp.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctiapp.o: ./include/ctientry.ch ./include/ctievents.ch
+ctiapp.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctiapp.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctiapp.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctiapp.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctiapp.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctiapp.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctiapp.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctiapp.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctiapp.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctiapp.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctiapp.o: ./include/ctizorder.ch
+ctibin.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctibin.o: ./include/ctibin.ch ./include/ctibox.ch
+ctibin.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctibin.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctibin.o: ./include/ctientry.ch ./include/ctievents.ch
+ctibin.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctibin.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctibin.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctibin.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctibin.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctibin.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctibin.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctibin.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctibin.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctibin.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctibin.o: ./include/ctizorder.ch
+ctibox.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctibox.o: ./include/ctibin.ch ./include/ctibox.ch
+ctibox.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctibox.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctibox.o: ./include/ctientry.ch ./include/ctievents.ch
+ctibox.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctibox.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctibox.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctibox.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctibox.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctibox.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctibox.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctibox.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctibox.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctibox.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctibox.o: ./include/ctizorder.ch
+ctibrowsecombo.o: ./include/cti.ch ./include/clipcti.ch
+ctibrowsecombo.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctibrowsecombo.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctibrowsecombo.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctibrowsecombo.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctibrowsecombo.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctibrowsecombo.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctibrowsecombo.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctibrowsecombo.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctibrowsecombo.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctibrowsecombo.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctibrowsecombo.o: ./include/ctipushbutton.ch
+ctibrowsecombo.o: ./include/ctiradiobutton.ch
+ctibrowsecombo.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctibrowsecombo.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctibrowsecombo.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctibrowsecombo.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+cticalendar.o: ./include/cti.ch ./include/clipcti.ch
+cticalendar.o: ./include/ctiapp.ch ./include/ctibin.ch
+cticalendar.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+cticalendar.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+cticalendar.o: ./include/cticontrol.ch ./include/ctientry.ch
+cticalendar.o: ./include/ctievents.ch ./include/ctihbox.ch
+cticalendar.o: ./include/ctilabel.ch ./include/ctilayout.ch
+cticalendar.o: ./include/ctilist.ch ./include/ctimenubar.ch
+cticalendar.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+cticalendar.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+cticalendar.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+cticalendar.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+cticalendar.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+cticalendar.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+cticalendar.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+cticalendar.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+cticalendar.o: ./include/ctievents.ch
+cticheckbox.o: ./include/cti.ch ./include/clipcti.ch
+cticheckbox.o: ./include/ctiapp.ch ./include/ctibin.ch
+cticheckbox.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+cticheckbox.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+cticheckbox.o: ./include/cticontrol.ch ./include/ctientry.ch
+cticheckbox.o: ./include/ctievents.ch ./include/ctihbox.ch
+cticheckbox.o: ./include/ctilabel.ch ./include/ctilayout.ch
+cticheckbox.o: ./include/ctilist.ch ./include/ctimenubar.ch
+cticheckbox.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+cticheckbox.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+cticheckbox.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+cticheckbox.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+cticheckbox.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+cticheckbox.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+cticheckbox.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+cticheckbox.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+cticontainer.o: ./include/cti.ch ./include/clipcti.ch
+cticontainer.o: ./include/ctiapp.ch ./include/ctibin.ch
+cticontainer.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+cticontainer.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+cticontainer.o: ./include/cticontrol.ch ./include/ctientry.ch
+cticontainer.o: ./include/ctievents.ch ./include/ctihbox.ch
+cticontainer.o: ./include/ctilabel.ch ./include/ctilayout.ch
+cticontainer.o: ./include/ctilist.ch ./include/ctimenubar.ch
+cticontainer.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+cticontainer.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+cticontainer.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+cticontainer.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+cticontainer.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+cticontainer.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+cticontainer.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+cticontainer.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+cticontrol.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+cticontrol.o: ./include/ctibin.ch ./include/ctibox.ch
+cticontrol.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+cticontrol.o: ./include/cticontainer.ch ./include/cticontrol.ch
+cticontrol.o: ./include/ctientry.ch ./include/ctievents.ch
+cticontrol.o: ./include/ctihbox.ch ./include/ctilabel.ch
+cticontrol.o: ./include/ctilayout.ch ./include/ctilist.ch
+cticontrol.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+cticontrol.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+cticontrol.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+cticontrol.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+cticontrol.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+cticontrol.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+cticontrol.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+cticontrol.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+cticontrol.o: ./include/ctizorder.ch
+ctientry.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctientry.o: ./include/ctibin.ch ./include/ctibox.ch
+ctientry.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctientry.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctientry.o: ./include/ctientry.ch ./include/ctievents.ch
+ctientry.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctientry.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctientry.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctientry.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctientry.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctientry.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctientry.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctientry.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctientry.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctientry.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctientry.o: ./include/ctizorder.ch
+ctievents.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctievents.o: ./include/ctibin.ch ./include/ctibox.ch
+ctievents.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctievents.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctievents.o: ./include/ctientry.ch ./include/ctievents.ch
+ctievents.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctievents.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctievents.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctievents.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctievents.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctievents.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctievents.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctievents.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctievents.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctievents.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctievents.o: ./include/ctizorder.ch
+ctifiled.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctifiled.o: ./include/ctibin.ch ./include/ctibox.ch
+ctifiled.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctifiled.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctifiled.o: ./include/ctientry.ch ./include/ctievents.ch
+ctifiled.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctifiled.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctifiled.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctifiled.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctifiled.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctifiled.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctifiled.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctifiled.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctifiled.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctifiled.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctifiled.o: ./include/ctizorder.ch ./include/ctievents.ch
+ctifuncs.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctifuncs.o: ./include/ctibin.ch ./include/ctibox.ch
+ctifuncs.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctifuncs.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctifuncs.o: ./include/ctientry.ch ./include/ctievents.ch
+ctifuncs.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctifuncs.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctifuncs.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctifuncs.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctifuncs.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctifuncs.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctifuncs.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctifuncs.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctifuncs.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctifuncs.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctifuncs.o: ./include/ctizorder.ch
+ctihbox.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctihbox.o: ./include/ctibin.ch ./include/ctibox.ch
+ctihbox.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctihbox.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctihbox.o: ./include/ctientry.ch ./include/ctievents.ch
+ctihbox.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctihbox.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctihbox.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctihbox.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctihbox.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctihbox.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctihbox.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctihbox.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctihbox.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctihbox.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctihbox.o: ./include/ctizorder.ch
+ctilabel.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctilabel.o: ./include/ctibin.ch ./include/ctibox.ch
+ctilabel.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctilabel.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctilabel.o: ./include/ctientry.ch ./include/ctievents.ch
+ctilabel.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctilabel.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctilabel.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctilabel.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctilabel.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctilabel.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctilabel.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctilabel.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctilabel.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctilabel.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctilabel.o: ./include/ctizorder.ch
+ctilayout.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctilayout.o: ./include/ctibin.ch ./include/ctibox.ch
+ctilayout.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctilayout.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctilayout.o: ./include/ctientry.ch ./include/ctievents.ch
+ctilayout.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctilayout.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctilayout.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctilayout.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctilayout.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctilayout.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctilayout.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctilayout.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctilayout.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctilayout.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctilayout.o: ./include/ctizorder.ch
+ctilist.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctilist.o: ./include/ctibin.ch ./include/ctibox.ch
+ctilist.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctilist.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctilist.o: ./include/ctientry.ch ./include/ctievents.ch
+ctilist.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctilist.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctilist.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctilist.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctilist.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctilist.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctilist.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctilist.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctilist.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctilist.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctilist.o: ./include/ctizorder.ch
+ctimain.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctimain.o: ./include/ctibin.ch ./include/ctibox.ch
+ctimain.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctimain.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctimain.o: ./include/ctientry.ch ./include/ctievents.ch
+ctimain.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctimain.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctimain.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctimain.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctimain.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctimain.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctimain.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctimain.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctimain.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctimain.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctimain.o: ./include/ctizorder.ch
+ctimenubar.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctimenubar.o: ./include/ctibin.ch ./include/ctibox.ch
+ctimenubar.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctimenubar.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctimenubar.o: ./include/ctientry.ch ./include/ctievents.ch
+ctimenubar.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctimenubar.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctimenubar.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctimenubar.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctimenubar.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctimenubar.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctimenubar.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctimenubar.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctimenubar.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctimenubar.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctimenubar.o: ./include/ctizorder.ch
+ctimenuitem.o: ./include/cti.ch ./include/clipcti.ch
+ctimenuitem.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctimenuitem.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctimenuitem.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctimenuitem.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctimenuitem.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctimenuitem.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctimenuitem.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctimenuitem.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctimenuitem.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctimenuitem.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctimenuitem.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctimenuitem.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctimenuitem.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctimenuitem.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctimenuitem.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctimenu.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctimenu.o: ./include/ctibin.ch ./include/ctibox.ch
+ctimenu.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctimenu.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctimenu.o: ./include/ctientry.ch ./include/ctievents.ch
+ctimenu.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctimenu.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctimenu.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctimenu.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctimenu.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctimenu.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctimenu.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctimenu.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctimenu.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctimenu.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctimenu.o: ./include/ctizorder.ch
+ctimenushell.o: ./include/cti.ch ./include/clipcti.ch
+ctimenushell.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctimenushell.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctimenushell.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctimenushell.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctimenushell.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctimenushell.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctimenushell.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctimenushell.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctimenushell.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctimenushell.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctimenushell.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctimenushell.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctimenushell.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctimenushell.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctimenushell.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctiobjectlist.o: ./include/cti.ch ./include/clipcti.ch
+ctiobjectlist.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctiobjectlist.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctiobjectlist.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctiobjectlist.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctiobjectlist.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctiobjectlist.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctiobjectlist.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctiobjectlist.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctiobjectlist.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctiobjectlist.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctiobjectlist.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctiobjectlist.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctiobjectlist.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctiobjectlist.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctiobjectlist.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctiobject.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctiobject.o: ./include/ctibin.ch ./include/ctibox.ch
+ctiobject.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctiobject.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctiobject.o: ./include/ctientry.ch ./include/ctievents.ch
+ctiobject.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctiobject.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctiobject.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctiobject.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctiobject.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctiobject.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctiobject.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctiobject.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctiobject.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctiobject.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctiobject.o: ./include/ctizorder.ch
+ctioptionmenu.o: ./include/cti.ch ./include/clipcti.ch
+ctioptionmenu.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctioptionmenu.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctioptionmenu.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctioptionmenu.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctioptionmenu.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctioptionmenu.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctioptionmenu.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctioptionmenu.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctioptionmenu.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctioptionmenu.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctioptionmenu.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctioptionmenu.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctioptionmenu.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctioptionmenu.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctioptionmenu.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctipushbutton.o: ./include/cti.ch ./include/clipcti.ch
+ctipushbutton.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctipushbutton.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctipushbutton.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctipushbutton.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctipushbutton.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctipushbutton.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctipushbutton.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctipushbutton.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctipushbutton.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctipushbutton.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctipushbutton.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctipushbutton.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctipushbutton.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctipushbutton.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctipushbutton.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctiradiobutton.o: ./include/cti.ch ./include/clipcti.ch
+ctiradiobutton.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctiradiobutton.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctiradiobutton.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctiradiobutton.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctiradiobutton.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctiradiobutton.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctiradiobutton.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctiradiobutton.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctiradiobutton.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctiradiobutton.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctiradiobutton.o: ./include/ctipushbutton.ch
+ctiradiobutton.o: ./include/ctiradiobutton.ch
+ctiradiobutton.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctiradiobutton.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctiradiobutton.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctiradiobutton.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctiradiogroup.o: ./include/cti.ch ./include/clipcti.ch
+ctiradiogroup.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctiradiogroup.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctiradiogroup.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctiradiogroup.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctiradiogroup.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctiradiogroup.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctiradiogroup.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctiradiogroup.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctiradiogroup.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctiradiogroup.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctiradiogroup.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctiradiogroup.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctiradiogroup.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctiradiogroup.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctiradiogroup.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctisignal.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctisignal.o: ./include/ctibin.ch ./include/ctibox.ch
+ctisignal.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctisignal.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctisignal.o: ./include/ctientry.ch ./include/ctievents.ch
+ctisignal.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctisignal.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctisignal.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctisignal.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctisignal.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctisignal.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctisignal.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctisignal.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctisignal.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctisignal.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctisignal.o: ./include/ctizorder.ch
+ctistatusbar.o: ./include/cti.ch ./include/clipcti.ch
+ctistatusbar.o: ./include/ctiapp.ch ./include/ctibin.ch
+ctistatusbar.o: ./include/ctibox.ch ./include/ctibrowsecombo.ch
+ctistatusbar.o: ./include/cticheckbox.ch ./include/cticontainer.ch
+ctistatusbar.o: ./include/cticontrol.ch ./include/ctientry.ch
+ctistatusbar.o: ./include/ctievents.ch ./include/ctihbox.ch
+ctistatusbar.o: ./include/ctilabel.ch ./include/ctilayout.ch
+ctistatusbar.o: ./include/ctilist.ch ./include/ctimenubar.ch
+ctistatusbar.o: ./include/ctimenu.ch ./include/ctimenuitem.ch
+ctistatusbar.o: ./include/ctimenushell.ch ./include/ctiobject.ch
+ctistatusbar.o: ./include/ctioptionmenu.ch ./include/ctipopupmenu.ch
+ctistatusbar.o: ./include/ctipushbutton.ch ./include/ctiradiobutton.ch
+ctistatusbar.o: ./include/ctiradiogroup.ch ./include/ctisignal.ch
+ctistatusbar.o: ./include/ctistatusbar.ch ./include/ctitbrowse.ch
+ctistatusbar.o: ./include/ctivbox.ch ./include/ctiwidget.ch
+ctistatusbar.o: ./include/ctiwindow.ch ./include/ctizorder.ch
+ctitbrowse.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctitbrowse.o: ./include/ctibin.ch ./include/ctibox.ch
+ctitbrowse.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctitbrowse.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctitbrowse.o: ./include/ctientry.ch ./include/ctievents.ch
+ctitbrowse.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctitbrowse.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctitbrowse.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctitbrowse.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctitbrowse.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctitbrowse.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctitbrowse.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctitbrowse.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctitbrowse.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctitbrowse.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctitbrowse.o: ./include/ctizorder.ch
+ctivbox.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctivbox.o: ./include/ctibin.ch ./include/ctibox.ch
+ctivbox.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctivbox.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctivbox.o: ./include/ctientry.ch ./include/ctievents.ch
+ctivbox.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctivbox.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctivbox.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctivbox.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctivbox.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctivbox.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctivbox.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctivbox.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctivbox.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctivbox.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctivbox.o: ./include/ctizorder.ch
+ctiwidget.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctiwidget.o: ./include/ctibin.ch ./include/ctibox.ch
+ctiwidget.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctiwidget.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctiwidget.o: ./include/ctientry.ch ./include/ctievents.ch
+ctiwidget.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctiwidget.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctiwidget.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctiwidget.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctiwidget.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctiwidget.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctiwidget.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctiwidget.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctiwidget.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctiwidget.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctiwidget.o: ./include/ctizorder.ch
+ctiwindow.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctiwindow.o: ./include/ctibin.ch ./include/ctibox.ch
+ctiwindow.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctiwindow.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctiwindow.o: ./include/ctientry.ch ./include/ctievents.ch
+ctiwindow.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctiwindow.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctiwindow.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctiwindow.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctiwindow.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctiwindow.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctiwindow.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctiwindow.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctiwindow.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctiwindow.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctiwindow.o: ./include/ctizorder.ch
+ctizorder.o: ./include/cti.ch ./include/clipcti.ch ./include/ctiapp.ch
+ctizorder.o: ./include/ctibin.ch ./include/ctibox.ch
+ctizorder.o: ./include/ctibrowsecombo.ch ./include/cticheckbox.ch
+ctizorder.o: ./include/cticontainer.ch ./include/cticontrol.ch
+ctizorder.o: ./include/ctientry.ch ./include/ctievents.ch
+ctizorder.o: ./include/ctihbox.ch ./include/ctilabel.ch
+ctizorder.o: ./include/ctilayout.ch ./include/ctilist.ch
+ctizorder.o: ./include/ctimenubar.ch ./include/ctimenu.ch
+ctizorder.o: ./include/ctimenuitem.ch ./include/ctimenushell.ch
+ctizorder.o: ./include/ctiobject.ch ./include/ctioptionmenu.ch
+ctizorder.o: ./include/ctipopupmenu.ch ./include/ctipushbutton.ch
+ctizorder.o: ./include/ctiradiobutton.ch ./include/ctiradiogroup.ch
+ctizorder.o: ./include/ctisignal.ch ./include/ctistatusbar.ch
+ctizorder.o: ./include/ctitbrowse.ch ./include/ctivbox.ch
+ctizorder.o: ./include/ctiwidget.ch ./include/ctiwindow.ch
+ctizorder.o: ./include/ctizorder.ch

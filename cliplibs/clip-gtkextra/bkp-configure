@@ -9,7 +9,7 @@ oldpwd=`pwd`
 DLLSUFF='.so'
 DLLREALSUFF='.so'
 
-rm -f Makefile _hashcode.h
+rm Makefile
 if [ $? != 0 ]
 then
 	hname=`hostname 2>/dev/null`
@@ -51,13 +51,13 @@ case "$uname" in
 		DLLREALSUFF='.dll'
 esac
 
-printf "configure: creating clip-gtkcfg.h .."
+printf "configure: creating clip-gtkextracfg.h .."
 
-exec 3>clip-gtkcfg.h
+exec 3>clip-gtkextracfg.h
 
 echo "/* Created automatically by 'configure' */" >&3
-echo "#ifndef CLIPGTK_CONFIG_H" >&3
-echo "#define CLIPGTK_CONFIG_H" >&3
+echo "#ifndef CLIPGTKEXTRA_CONFIG_H" >&3
+echo "#define CLIPGTKEXTRA_CONFIG_H" >&3
 echo >&3
 echo '#undef  VERSION ' >&3
 echo '#undef  OSNAME ' >&3
@@ -66,21 +66,6 @@ echo "#define OS_$osname" >&3
 echo '#undef  SYSTEM ' >&3
 echo '#define SYSTEM "'$uname'"' >&3
 echo '' >&3
-
-pixbufprefix=`gdk-pixbuf-config --prefix 2>/dev/null`
-
-if [ $? -ne 0 ]
-then
-	PIXBUFLIBS=""
-	PIXBUFCFLAGS=""
-	PIXBUFSRC=''
-	PIXBUFOBJ=''
-else
-	PIXBUFLIBS=`gdk-pixbuf-config --libs`
-	PIXBUFCFLAGS=`gdk-pixbuf-config --cflags`
-	PIXBUFSRC='gdkpixbuf.c gdkrgb.c'
-	PIXBUFOBJ='gdkpixbuf.o gdkrgb.o'
-fi
 
 gtkprefix=`gtk-config --prefix 2>/dev/null`
 
@@ -92,25 +77,26 @@ then
 	echo "*****************************************************************"
 	USE_GTK=no
 else
-##	LIBS='-lgtk -lgdk'
-#	gtkincpath=$(dirname $(find $gtkprefix/include -name 'gtk.h'))
-#	cd $gtkincpath/..
-#	gtkincpath=`pwd`
-#	cd $oldpwd
+	gtkincpath=`find $gtkprefix/include/gtk-1.2 -name 'gtk.h' -printf '%h'`
+	cd $gtkincpath/..
+	gtkincpath=`pwd`
+	cd $oldpwd
 	LIBS=`gtk-config --libs`
 
 	if [ "$osname" = "CYGWIN" ]
 	then
 		EXTRACFLAGS='-fnative-struct'
+#		LIBS=$LIBS" -L"$CLIPROOT"/lib -llibclip-gtk"
 	fi
-#	if [ -f $gtkincpath/gtk.h ]
-#	then
-#		USE_GTK=yes
-#		echo '#define HAVE_GTK' >&3
-#	else
-#		echo
-#		echo 'Warning: system do not have installed GTK+ development'
-#	fi
+	if [ -f $gtkincpath/gtk/gtk.h ]
+	then
+		USE_GTK=yes
+		echo '#define HAVE_GTK' >&3
+	else
+		echo
+		echo 'Warning: system do not have installed GTK+ development'
+		exit
+	fi
 	GTK_MAJOR=`gtk-config --version|cut -d. -f1`
 	GTK_MINOR=`gtk-config --version|cut -d. -f2`
 	if [ ! \( "$GTK_MAJOR" -ge 1 -o "$GTK_MINOR" -ge 2 -o "$GTK_MAJOR" -gt 1 \) ]
@@ -120,15 +106,56 @@ else
 	fi
 fi
 
+#gtkextraprefix=`gtkextra-config --prefix 2>/dev/null`
+gtkextraprefix="$gtkprefix"
+find $gtkextraprefix/include -name 'gtkextra.h' >/dev/null 2>&1
+if [ $? -ne 0 ]
+then
+	echo
+	echo "****************************************************************************"
+	echo "***               The gtkextra header file could not be found            ***"
+	echo "****************************************************************************"
+	USE_GTK_EXTRA=no
+else
+	gtkextraincpath=`find $gtkextraprefix/include -name 'gtkextra.h' -printf ' %h'`
+	trt=$gtkextraincpath
+	gtkextraincpath=
+	for ii in $trt
+		do
+		if [ -z "$gtkextraincpath" ]
+			then
+			gtkextraincpath=$ii
+		fi
+		if ! [ "$gtkextraincpath" \> "$ii" ]
+			then
+			gtkextraincpath=$ii
+		fi
+	done
+	cd $gtkextraincpath
+	gtkextraincpath=`pwd`
+	cd $OLDPWD
+	#LIBS=$LIBS' '`gtkextra-config --libs`
+        LIBS=$LIBS' '`gtk-config --libs`
+
+	if [ "$osname" = "CYGWIN" ]
+	then
+		EXTRACFLAGS='-fnative-struct'
+		#LIBS=$LIBS' -L$(CLIPROOT)/lib -lclip-gtk '`gtkextra-config --libs`
+                LIBS=$LIBS' -L$(CLIPROOT)/lib -lclip-gtk '`gtk-config --libs`
+	fi
+	if [ -f $gtkextraprefix/include/gtkextra-2.0/gtkextra/gtkextra.h ]
+	then
+		USE_GTK_EXTRA=yes
+		echo '#define HAVE_GTK_EXTRA' >&3
+	else
+		echo
+		echo 'Warning: system do not have installed GTK+Extra development'
+	fi
+fi
+
 echo "#endif" >&3
 exec 3>&-
 echo ". done."
-if [ "$USE_GTK" = no ]
-then
-	echo "gtk not detected"
-	exit 0
-fi
-
 
 printf "configure: Makefile creating.."
 
@@ -140,7 +167,7 @@ echo >&3
 echo '#' >&3
 echo '#	Compile flags' >&3
 echo '#' >&3
-echo "CLIPROOT='$CLIPROOT'" >&3
+echo "CLIPROOT=$CLIPROOT" >&3
 echo "include $CLIPROOT/include/Makefile.inc" >&3
 echo "OSNAME='$osname'" >&3
 
@@ -163,19 +190,21 @@ fi
 echo "COMPILER='$CC'" >&3
 echo "DLLSUFF='$DLLSUFF'" >&3
 echo "DLLREALSUFF='$DLLREALSUFF'" >&3
-echo "PIXBUFINCLUDEDIRS='$PIXBUFCFLAGS'" >&3
-echo 'INCLUDEDIRS=-I. -I$(CLIPROOT)/include $(PIXBUFINCLUDEDIRS) '$(gtk-config --cflags) >&3
+echo 'INCLUDEDIRS=-I. -I$(CLIPROOT)/include -I'$gtkprefix'/include -I'$gtkextraprefix'/include' >&3
 echo "XTARGETS='"'$(XLIB) $(XSLIB)'"'" >&3
-echo "C_FLAGS=-fPIC -Wall -Wextra '"'$(INCLUDEDIRS)'"' '$EXTRACFLAGS'" >&3
-echo "LIBS='$LIBS $PIXBUFLIBS' " >&3
-echo "PIXBUFSRC='$PIXBUFSRC' " >&3
-echo "PIXBUFOBJ='$PIXBUFOBJ' " >&3
+echo "C_FLAGS=-Wall -Wextra '"'$(INCLUDEDIRS)'"' '$EXTRACFLAGS'" >&3
+echo "LIBS='$LIBS'" >&3
 
 if [ "$USE_GTK" = yes ]
 then
 	XCFLAGS=`gtk-config --cflags`
-	echo "XCFLAGS='$XCFLAGS $PIXBUFCFLAGS'" >&3
 fi
+if [ "$USE_GTK_EXTRA" = yes ]
+then
+	#XCFLAGS="'$XCFLAGS' `gtkextra-config --cflags`"
+        XCFLAGS="'$XCFLAGS' `gtk-config --cflags`"
+fi
+echo "XCFLAGS='$XCFLAGS'" >&3
 
 echo >&3
 exec 3>&-
@@ -184,3 +213,4 @@ tr -d \' <./Makefile.inc >Makefile
 cat ./Makefile.in >>Makefile
 
 echo ". done."
+

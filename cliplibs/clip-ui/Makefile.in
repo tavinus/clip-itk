@@ -22,7 +22,7 @@ OBJS    = button.o checkbox.o choice.o color.o combobox.o edit.o \
 		  table.o timer.o toolbar.o tree.o utils.o window.o workspace.o \
 		  glade.o qt_designer.o
 
-LANGS   = ru_RU.KOI8-R
+LANGS   = ru_RU
 
 .PHONY: all clean uninstall distclean
 
@@ -55,9 +55,8 @@ install: all
 	cp -R example/* $(DESTDIR)$(CLIPROOT)/doc/example/clip-ui/
 	mkdir -p $(DESTDIR)$(CLIPROOT)/locale.po
 	cd locale.po && \
-	for i in $(LANGS); do mkdir -p $(DESTDIR)$(CLIPROOT)/locale.po/$$i/ && \
-	$(CLIPROOT)/bin/clip_cp $$i/*.po $(DESTDIR)$(CLIPROOT)/locale.po/$$i/; done
-	
+	for i in $(ls locale.po/ 2>/dev/null); do mkdir -p $(DESTDIR)$(CLIPROOT)/locale.po/$$i && $(CLIPROOT)/bin/clip_cp $$i/*.po $(DESTDIR)$(CLIPROOT)/locale.po/$$i/ ; done ;
+
 uninstall:
 	cd drivers && $(MAKE) uninstall
 	rm -rf $(CLIPROOT)/lib/$(TARGET) $(CLIPROOT)/lib/$(RTARGET) $(CLIPROOT)/doc/example/clip-ui/

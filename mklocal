@@ -25,12 +25,14 @@ do
 	-release)
 		RFLAG='-r'
 		LANG=C
-				dostrip=no
-				release=yes
+		dostrip=no
+		release=yes
 		[ -n "$CLIPROOT" ] || CLIPROOT=/usr/local/clip
 		;;
 	esac
 done
+
+noclean=yes
 
 if [ -n "$MAKE" ]
 then
@@ -133,8 +135,11 @@ cd $pwd
 #		CLIPROOT=${DESTDIR}${CLIPROOT}
 #		LD_LIBRARY_PATH=${DESTDIR}/usr/lib:$LD_LIBRARY_PATH
 #		export CLIPROOT  LD_LIBRARY_PATH
+#		echo $'\n\nMAYBE HERE?\n\n'
 		$MAKE
+#                echo $'\n\nOR HERE?\n\n'
 		$MAKE install
+#                echo $'\n\nOR EVEN HERE?\n\n'
 #		${DESTDIR}${CLIPROOT}/bin/clip_msgmerge
 #		${DESTDIR}${CLIPROOT}/bin/clip_msgfmt
 #	)

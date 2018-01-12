@@ -22,11 +22,11 @@ distclean:
 cleanroot: clean
 	rm -rf ../cliproot/*
 
-user local: clean
-	./mklocal
+user local: #clean
+	./mklocal -noclean
 
-system: clean
-	./mklocal -release
+system: #clean
+	./mklocal -noclean -release
 
 packages: clean src tgz rpm deb
 

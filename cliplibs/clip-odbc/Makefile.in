@@ -29,14 +29,14 @@ $(TARGET1): $(OBJS)
 	[ "$(LIBOOB)" = '' ] || $(CLIPROOT)/bin/clip_makeslib $(TARGET1) $(OBJS) $(LIBOOB) $(C_LIBS)
 
 odbc_clip.o: odbc_clip.c odbc.ch
-	$(CC) $(C_FLAGS) -c odbc_clip.c
+	$(CC) $(ADD_CFLAGS) $(C_FLAGS) -c odbc_clip.c
 
 odbc.o: odbc.prg odbc.ch
 	$(CLIPROOT)/bin/clip odbc.prg
 
 install:
 	$(CLIPROOT)/bin/clip_cp $(TARGET) $(DESTDIR)$(CLIPROOT)/lib
-	$(CLIPROOT)/bin/clip_cp $(TARGET1) $(DESTDIR)$(CLIPROOT)/lib
+	#$(CLIPROOT)/bin/clip_cp $(TARGET1) $(DESTDIR)$(CLIPROOT)/lib
 	#[ "$(TARGET)" = "$(RTARGET)" ] || cp $(RTARGET) $(DESTDIR)$(CLIPROOT)/lib
 	#[ "$(TARGET1)" = "$(RTARGET1)" ] || cp $(RTARGET1) $(DESTDIR)$(CLIPROOT)/lib
 	mkdir -p $(DESTDIR)$(CLIPROOT)/doc/clip-odbc

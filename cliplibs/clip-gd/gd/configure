@@ -23,6 +23,7 @@ fi
 osname=UNIX
 stdlibpath=/usr/local/lib
 stdincpath=/usr/local/include
+
 LIBXPM='-lXpm -lX11'
 
 case "$uname" in
@@ -31,7 +32,9 @@ case "$uname" in
 		;;
 	[lL]inux*)
 		osname=LINUX
-		stdlibpath=/usr/lib
+		#stdlibpath=/usr/lib
+		#stdincpath=/usr/include
+		stdlibpath=/usr/lib64
 		stdincpath=/usr/include
 		;;
 	FreeBSD*)
@@ -94,13 +97,15 @@ echo "LIBDIRS='-L. -L$stdlibpath -L/usr/lib/X11 -L/usr/X11R6/lib'" >&3
 #echo "INCLUDEDIRS='-I. -I/usr/include/freetype2 -I/usr/include/X11 -I/usr/X11R6/include -I/usr/X11R6/include/X11 -I$stdincpath'" >&3
 echo "INCLUDEDIRS='-I. -I/usr/include/freetype2 -I/usr/include/freetype2/freetype -I/usr/include/X11 -I/usr/X11R6/include -I/usr/X11R6/include/X11 -I$stdincpath'" >&3
 
+#echo " > $stdlibpath/libpng${DLLSUFF}"
 if [ -f $stdlibpath/libpng${DLLSUFF} ]
 then
-	echo "LIBPNG='-lpng'" >&3
+	echo "LIBPNG='-l:libpng12.so'" >&3
 else
 	echo 'Warning: libpng not installed'
 fi
 
+#echo " > $stdlibpath/libjpeg${DLLSUFF}"
 if [ -f $stdlibpath/libjpeg${DLLSUFF} ]
 then
 	echo "LIBJPEG='-ljpeg'" >&3

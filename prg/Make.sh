@@ -26,7 +26,7 @@ then
 fi
 if [ -d kamache ]
 then
-	cd kamache; $MAKE; cd ..
+	cd kamache; echo $'\n\nKAMACHE MAKING STARTS\n\n' ; $MAKE; echo $'\n\nKAMACHE MAKING DONE\n\n' ; cd ..
 fi
 if [ -d debug ]
 then
@@ -107,7 +107,7 @@ fi
 if [ -d udbx ]
 then
 	cd udbx
-	#$MAKE
+	$MAKE
 	cd ..
 fi
 if [ -d ocmng ]

@@ -19,7 +19,7 @@ clean:
 	cd mod-clip; $(MAKE) clean
 	#cd tcp-wrap; $(MAKE) clean
 
-kamache:kamache.prg $(CHS) $(OBJS)
+kamache: kamache.prg #$(CHS) $(OBJS)
 	$(CLIP) $(CLIPFLAGS) -esl kamache.prg $(OBJS) $(CLIPLIBS)
 	cd mod-ini; $(MAKE)
 	cd mod-clip; $(MAKE)
